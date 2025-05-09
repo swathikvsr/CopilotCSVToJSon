@@ -1,0 +1,26 @@
+import csv
+import json
+
+def csv_to_json(csv_file_path, json_file_path):
+    try:
+        # Read the CSV file
+        with open(csv_file_path, mode='r', encoding='utf-8') as csv_file:
+            csv_reader = csv.DictReader(csv_file)
+            data = [row for row in csv_reader]
+
+        # Convert to JSON and remove backslashes
+        json_data = json.dumps(data, ensure_ascii=False)
+        json_data = json_data.replace("\\", "")  # Remove backslashes
+
+        # Write the JSON data to a file
+        with open(json_file_path, mode='w', encoding='utf-8') as json_file:
+            json_file.write(json_data)
+
+        print(f"JSON file created successfully at: {json_file_path}")
+    except Exception as e:
+        print(f"Error: {e}")
+
+# Example usage
+csv_file_path = 'sample.csv'  # Replace with your CSV file path
+json_file_path = 'output.json'  # Replace with your desired JSON file path
+csv_to_json(csv_file_path, json_file_path)
