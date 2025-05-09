@@ -1,5 +1,6 @@
 import csv
 import json
+import subprocess
 
 def csv_to_json(csv_file_path, json_file_path):
     try:
@@ -17,8 +18,37 @@ def csv_to_json(csv_file_path, json_file_path):
             json_file.write(json_data)
 
         print(f"JSON file created successfully at: {json_file_path}")
+
+        # Automate Git operations
+        automate_git_operations(json_file_path)
+
     except Exception as e:
         print(f"Error: {e}")
+
+def automate_git_operations(json_file_path):
+    try:
+        # Stage the changes
+        subprocess.run(["git", "add", json_file_path], check=True)
+
+        # Commit the changes
+        commit_message = "Automated: Converted CSV to JSON and updated output.json"
+        subprocess.run(["git", "commit", "-m", commit_message], check=True)
+
+        # Create a feature branch
+        branch_name = "feature/update-json-from-csv"
+        subprocess.run(["git", "checkout", "-b", branch_name], check=True)
+
+        # Push the branch to the remote repository
+        subprocess.run(["git", "push", "-u", "origin", branch_name], check=True)
+
+        # Create a pull request using GitHub CLI (gh)
+        pr_title = "Automated PR: Update JSON from CSV"
+        pr_body = "This PR was automatically created by the script to update the JSON file."
+        subprocess.run(["gh", "pr", "create", "--base", "main", "--head", branch_name, "--title", pr_title, "--body", pr_body], check=True)
+
+        print("Pull request created successfully.")
+    except subprocess.CalledProcessError as e:
+        print(f"Git operation failed: {e}")
 
 # Example usage
 csv_file_path = 'sample.csv'  # Replace with your CSV file path
